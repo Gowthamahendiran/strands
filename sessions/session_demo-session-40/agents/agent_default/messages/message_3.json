@@ -1,0 +1,26 @@
+{
+  "message": {
+    "role": "assistant",
+    "content": [
+      {
+        "text": "You said your name is Gowtham, and your favorite programming language is Python. How can I assist you further?"
+      }
+    ],
+    "metadata": {
+      "usage": {
+        "inputTokens": 1319,
+        "outputTokens": 24,
+        "totalTokens": 1343,
+        "cacheReadInputTokens": 1280
+      },
+      "metrics": {
+        "latencyMs": 0,
+        "timeToFirstByteMs": 1645
+      }
+    }
+  },
+  "message_id": 3,
+  "redact_message": null,
+  "created_at": "2026-07-01T17:41:09.462268+00:00",
+  "updated_at": "2026-07-01T17:41:09.462301+00:00"
+}

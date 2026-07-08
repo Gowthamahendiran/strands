@@ -1,0 +1,14 @@
+{
+  "message": {
+    "role": "user",
+    "content": [
+      {
+        "text": "What did I say my favorite programming language was? And what is my name?"
+      }
+    ]
+  },
+  "message_id": 2,
+  "redact_message": null,
+  "created_at": "2026-07-01T17:41:07.492330+00:00",
+  "updated_at": "2026-07-01T17:41:07.492333+00:00"
+}

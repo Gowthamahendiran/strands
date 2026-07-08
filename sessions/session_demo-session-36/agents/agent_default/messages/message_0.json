@@ -1,0 +1,14 @@
+{
+  "message": {
+    "role": "user",
+    "content": [
+      {
+        "text": "Help me buy a gaming laptop.\n\nMy budget is ₹90,000.\nSuggest some options."
+      }
+    ]
+  },
+  "message_id": 0,
+  "redact_message": null,
+  "created_at": "2026-07-05T16:22:44.406262+00:00",
+  "updated_at": "2026-07-05T16:22:44.406267+00:00"
+}

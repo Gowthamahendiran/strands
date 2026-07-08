@@ -1,0 +1,26 @@
+{
+  "message": {
+    "role": "assistant",
+    "content": [
+      {
+        "text": "Sure! To help you find the best gaming laptop within a budget of ₹90,000, consider the following factors:\n\n1. GPU: A dedicated graphics card like NVIDIA GTX/RTX or AMD Radeon is essential for gaming.\n2. CPU: Intel i5 or AMD Ryzen 5 and above are good choices.\n3. RAM: At least 8GB, preferably 16GB for better performance.\n4. Storage: SSD for faster load times, with at least 256GB.\n5. Display: Full HD (1920x1080) with a higher refresh rate if possible.\n\nHere are some gaming laptops that are generally available in the ₹80,000 to ₹90,000 range (prices may vary):\n\n1. Acer Nitro 5\n   - CPU: Intel Core i5 10th or 11th Gen / AMD Ryzen 5 4600H\n   - GPU: NVIDIA GTX 1650\n   - RAM: 8GB (expandable)\n   - Storage: 256GB SSD + 1TB HDD\n   - Display: 15.6\" Full HD IPS, 60Hz or higher\n\n2. ASUS TUF Gaming F15\n   - CPU: Intel Core i5 10th or 11th Gen\n   - GPU: NVIDIA GTX 1650 Ti\n   - RAM: 8GB\n   - Storage: 512GB SSD\n   - Display: 15.6\" Full HD, 60Hz\n\n3. Lenovo Legion Y540/Y545 (used or discounted offers might fit budget)\n   - CPU: Intel Core i5 9th Gen\n   - GPU: NVIDIA GTX 1650\n   - RAM: 8GB\n   - Storage: 512GB SSD\n   - Display: 15.6\" Full HD\n\n4. HP Pavilion Gaming\n   - CPU: AMD Ryzen 5 / Intel Core i5\n   - GPU: NVIDIA GTX 1650\n   - RAM: 8GB\n   - Storage: 512GB SSD\n   - Display: 15.6\" Full HD\n\nI recommend checking local e-commerce sites like Amazon India, Flipkart, or local stores for the latest deals and availability.\n\nWould you like links to some options available online right now?"
+      }
+    ],
+    "metadata": {
+      "usage": {
+        "inputTokens": 1267,
+        "outputTokens": 467,
+        "totalTokens": 1734,
+        "cacheReadInputTokens": 1152
+      },
+      "metrics": {
+        "latencyMs": 0,
+        "timeToFirstByteMs": 1700
+      }
+    }
+  },
+  "message_id": 1,
+  "redact_message": null,
+  "created_at": "2026-07-05T16:22:50.611346+00:00",
+  "updated_at": "2026-07-05T16:22:50.611376+00:00"
+}
