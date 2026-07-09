@@ -5,16 +5,15 @@ from strands import Agent
 from strands.models.openai import OpenAIModel
 from strands.memory import MemoryManager
 
-# Ensure current directory is in path
+# Ensure project root directory is in path
 current_dir = os.path.dirname(os.path.abspath(__file__))
-if current_dir not in sys.path:
-    sys.path.insert(0, current_dir)
+project_root = os.path.dirname(current_dir)
+if project_root not in sys.path:
+    sys.path.insert(0, project_root)
 
 from secrets import get_openai_credentials
 from dynamo_memory.setup_db import create_memory_table
 from dynamo_memory.memory_store import DynamoDBMemoryStore
-
-
 
 PineconeAPI = "pcsk_5gsq6z_7dfjfUBNPUhuedF2S6pNfoCEUqGjxpaEdr8eaCUsiEhHcpvByFx8PNy2ZE2MQQN"
 def cleanup_memories(table_name: str, client_id: str):

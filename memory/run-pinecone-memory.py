@@ -1,21 +1,30 @@
 import os
 import sys
+import base64
 from strands import Agent
 from strands.models.openai import OpenAIModel
 from strands.memory import MemoryManager
+from strands.telemetry import StrandsTelemetry
 from pinecone import Pinecone
+# pyrefly: ignore [missing-import]
+from langfuse import Langfuse
 
-# Ensure current directory is in path
+# Ensure project root directory is in path
 current_dir = os.path.dirname(os.path.abspath(__file__))
-if current_dir not in sys.path:
-    sys.path.insert(0, current_dir)
+project_root = os.path.dirname(current_dir)
+if project_root not in sys.path:
+    sys.path.insert(0, project_root)
 
-from secrets import get_openai_credentials
+from secrets import get_openai_credentials, get_llm_secret
 from pinecone_memory.memory_store import PineconeMemoryStore
 
-# Pinecone Configuration
-PINECONE_API_KEY = "pcsk_5gsq6z_7dfjfUBNPUhuedF2S6pNfoCEUqGjxpaEdr8eaCUsiEhHcpvByFx8PNy2ZE2MQQN"
-PINECONE_INDEX_NAME = "strands-memory"
+# Load environment variables
+from dotenv import load_dotenv
+load_dotenv()
+
+# Pinecone Configuration loaded from environment
+PINECONE_API_KEY = os.getenv("PINECONE_API_KEY")
+PINECONE_INDEX_NAME = os.getenv("PINECONE_INDEX", "strands-memory")
 
 def cleanup_memories(index_name: str, api_key: str, client_id: str):
     """Delete all memories for the client_id from Pinecone to ensure a clean demo run."""
@@ -45,12 +54,38 @@ def cleanup_memories(index_name: str, api_key: str, client_id: str):
             print(f"Fallback deletion failed: {ex}")
 
 def run_pinecone_memory_demo():
+    import logging
+    logging.basicConfig(level=logging.INFO)
+
+    # Load Langfuse credentials from environment variables
+    LANGFUSE_SECRET_KEY = os.getenv("LANGFUSE_SECRET_KEY")
+    LANGFUSE_PUBLIC_KEY = os.getenv("LANGFUSE_PUBLIC_KEY")
+    LANGFUSE_BASE_URL = os.getenv("LANGFUSE_BASE_URL")
+
+    # Set native Langfuse SDK environment variables (host must be set to LANGFUSE_HOST)
+    os.environ["LANGFUSE_HOST"] = LANGFUSE_BASE_URL
+    os.environ["LANGFUSE_PUBLIC_KEY"] = LANGFUSE_PUBLIC_KEY
+    os.environ["LANGFUSE_SECRET_KEY"] = LANGFUSE_SECRET_KEY
+
+    # Initialize the Strands global OpenTelemetry TracerProvider
+    StrandsTelemetry()
+
+    # Initialize Langfuse, which hooks into the global OpenTelemetry provider
+    print("Initializing Langfuse Native Tracing SDK...")
+    langfuse_client = Langfuse(
+        public_key=LANGFUSE_PUBLIC_KEY,
+        secret_key=LANGFUSE_SECRET_KEY,
+        host=LANGFUSE_BASE_URL
+    )
+
     client_id = "twitter-5a3f939c-8e17-4343-b7ceb"
 
     # 1. Cleanup previous memories in Pinecone index for repeatability
     cleanup_memories(index_name=PINECONE_INDEX_NAME, api_key=PINECONE_API_KEY, client_id=client_id)
 
     api_key, model_name = get_openai_credentials()
+    
+    # Initialize standard model client (it will be auto-traced via OpenTelemetry + Langfuse)
     model = OpenAIModel(
         model_id=model_name,
         client_args={"api_key": api_key}
@@ -141,6 +176,10 @@ def run_pinecone_memory_demo():
             print("-" * 50)
     except Exception as e:
         print(f"Error querying Pinecone for inspection: {e}")
+
+    # 6. Flush Langfuse traces to ensure all events are sent before script terminates
+    print("Flushing traces to Langfuse...")
+    Langfuse().flush()
 
 if __name__ == "__main__":
     run_pinecone_memory_demo()
