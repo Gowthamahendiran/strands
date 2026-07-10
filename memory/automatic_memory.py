@@ -51,7 +51,6 @@ async def run_automatic_memory_demo():
     StrandsTelemetry()
 
     # Initialize Langfuse, which hooks into the global OpenTelemetry provider
-    print("Initializing Langfuse Native Tracing SDK...")
     langfuse_client = Langfuse(
         public_key=LANGFUSE_PUBLIC_KEY,
         secret_key=LANGFUSE_SECRET_KEY,
@@ -98,27 +97,22 @@ async def run_automatic_memory_demo():
     print("\n=== Conversing with Agent (Automatic extraction will trigger every 5 turns) ===")
     
     # Turn 1
-    print("User: Hi! My name is Gowtham.")
     resp = agent("Hi! My name is Gowtham.")
     print(f"Agent: {resp}\n")
     
     # Turn 2
-    print("User: I live in Chennai.")
     resp = agent("I live in Chennai.")
     print(f"Agent: {resp}\n")
     
     # Turn 3
-    print("User: My favorite coding language is Python.")
     resp = agent("My favorite coding language is Python.")
     print(f"Agent: {resp}\n")
     
     # Turn 4
-    print("User: I have a pet dog named Buddy.")
     resp = agent("I have a pet dog named Buddy.")
     print(f"Agent: {resp}\n")
     
     # Turn 5 (This will hit 5 turns and trigger the extraction!)
-    print("User: I love drinking filter coffee.")
     resp = agent("I love drinking filter coffee.")
     print(f"Agent: {resp}\n")
 
@@ -145,8 +139,6 @@ async def run_automatic_memory_demo():
         print(f"Error querying Pinecone: {e}")
 
     # Turn 6: Verify memory is remembered and queried
-    print("\n=== Turn 6: Querying memory context ===")
-    print("User: What is my favorite programming language and where do I live?")
     resp = agent("What is my favorite programming language and where do I live?")
     print(f"Agent: {resp}\n")
 
