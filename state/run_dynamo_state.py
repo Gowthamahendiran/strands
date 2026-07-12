@@ -12,7 +12,7 @@ project_root = os.path.dirname(current_dir)
 if project_root not in sys.path:
     sys.path.insert(0, project_root)
 
-from secrets import get_openai_credentials
+from strands_secrets import get_openai_credentials
 from dynamo_persistence.setup_db import create_session_table
 from dynamo_persistence.session_manager import DynamoDBSessionManager
 

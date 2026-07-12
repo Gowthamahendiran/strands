@@ -6,7 +6,7 @@ current_dir = os.path.dirname(os.path.abspath(__file__))
 if current_dir not in sys.path:
     sys.path.insert(0, current_dir)
 
-from secrets import get_openai_credentials
+from strands_secrets import get_openai_credentials
 from strands import Agent
 from strands.models.openai import OpenAIModel
 from strands_tools.calculator import calculator

@@ -17,6 +17,7 @@ dotenv_path = os.path.join(backend_dir, ".env")
 if os.path.exists(dotenv_path):
     load_dotenv(dotenv_path)
 
+# pyrefly: ignore [missing-import]
 from app.config import first_present, get_settings
 
 logger = logging.getLogger(__name__)
