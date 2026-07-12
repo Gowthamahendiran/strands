@@ -2,8 +2,6 @@ import os
 import sys
 import asyncio
 from pinecone import Pinecone
-# pyrefly: ignore [missing-import]
-from langfuse import Langfuse
 
 # Ensure project root directory is in path
 current_dir = os.path.dirname(os.path.abspath(__file__))
@@ -15,8 +13,7 @@ from strands_secrets import get_openai_credentials, get_llm_secret
 from strands import Agent
 from strands.models.openai import OpenAIModel
 from strands.memory import MemoryManager
-from strands.telemetry import StrandsTelemetry
-from pinecone_memory.memory_store import PineconeMemoryStore
+from pinecone_memory import PineconeMemoryStore, cleanup_memories, init_telemetry_and_logging
 
 # Load environment variables
 from dotenv import load_dotenv
@@ -26,36 +23,8 @@ load_dotenv()
 PINECONE_API_KEY = os.getenv("PINECONE_API_KEY")
 PINECONE_INDEX_NAME = os.getenv("PINECONE_INDEX", "strands-memory")
 
-def cleanup_memories(index_name: str, api_key: str, client_id: str):
-    """Delete all memories for the client_id from Pinecone to ensure a clean demo run."""
-    pc = Pinecone(api_key=api_key)
-    index = pc.Index(index_name)
-    try:
-        index.delete(filter={"client_id": {"$eq": client_id}})
-        print(f"Cleared previous memories for Client '{client_id}' from Pinecone.")
-    except Exception as e:
-        print(f"Error clearing memories: {e}")
-
 async def run_automatic_memory_demo():
-    # Load Langfuse credentials from environment variables
-    LANGFUSE_SECRET_KEY = os.getenv("LANGFUSE_SECRET_KEY")
-    LANGFUSE_PUBLIC_KEY = os.getenv("LANGFUSE_PUBLIC_KEY")
-    LANGFUSE_BASE_URL = os.getenv("LANGFUSE_BASE_URL")
-
-    # Set native Langfuse SDK environment variables
-    os.environ["LANGFUSE_HOST"] = LANGFUSE_BASE_URL
-    os.environ["LANGFUSE_PUBLIC_KEY"] = LANGFUSE_PUBLIC_KEY
-    os.environ["LANGFUSE_SECRET_KEY"] = LANGFUSE_SECRET_KEY
-
-    # Initialize the Strands global OpenTelemetry TracerProvider
-    StrandsTelemetry()
-
-    # Initialize Langfuse, which hooks into the global OpenTelemetry provider
-    langfuse_client = Langfuse(
-        public_key=LANGFUSE_PUBLIC_KEY,
-        secret_key=LANGFUSE_SECRET_KEY,
-        host=LANGFUSE_BASE_URL
-    )
+    langfuse_client = init_telemetry_and_logging()
 
     client_id = "twitter-automatic-memory-demo"
 
@@ -144,7 +113,7 @@ async def run_automatic_memory_demo():
 
     # Flush Langfuse traces before exit
     print("Flushing traces to Langfuse...")
-    Langfuse().flush()
+    langfuse_client.flush()
 
 if __name__ == "__main__":
     asyncio.run(run_automatic_memory_demo())
