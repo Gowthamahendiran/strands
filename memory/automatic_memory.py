@@ -66,23 +66,23 @@ async def run_automatic_memory_demo():
     print("\n=== Conversing with Agent (Automatic extraction will trigger every 5 turns) ===")
     
     # Turn 1
-    resp = agent("Hi! My name is Gowtham.")
+    resp = agent("Hi! My name is brother name is Mahi.")
     print(f"Agent: {resp}\n")
     
     # Turn 2
-    resp = agent("I live in Chennai.")
+    resp = agent("I prefer dark mode.")
     print(f"Agent: {resp}\n")
     
     # Turn 3
-    resp = agent("My favorite coding language is Python.")
+    resp = agent("I only eat vegetarian food.")
     print(f"Agent: {resp}\n")
     
     # Turn 4
-    resp = agent("I have a pet dog named Buddy.")
+    resp = agent("I love to watch movies.")
     print(f"Agent: {resp}\n")
     
     # Turn 5 (This will hit 5 turns and trigger the extraction!)
-    resp = agent("I love drinking filter coffee.")
+    resp = agent("I love eating oats in morning.")
     print(f"Agent: {resp}\n")
 
     # Await background processes to complete extraction
@@ -108,8 +108,9 @@ async def run_automatic_memory_demo():
         print(f"Error querying Pinecone: {e}")
 
     # Turn 6: Verify memory is remembered and queried
-    resp = agent("What is my favorite programming language and where do I live?")
+    resp = agent("What is my name, my preferences (like theme, food, movies), and what do I like to drink?")
     print(f"Agent: {resp}\n")
+
 
     # Flush Langfuse traces before exit
     print("Flushing traces to Langfuse...")

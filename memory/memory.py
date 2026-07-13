@@ -111,19 +111,89 @@ class InMemoryStore:
 
         return [MemoryEntry(content=content) for content in matches[:limit]]
 
+    async def _check_duplicate_llm(self, existing: str, new: str) -> bool:
+        """Lightweight LLM call to verify if the new fact is a duplicate of the existing fact."""
+        try:
+            try:
+                from strands_secrets import get_openai_credentials
+                _, model_name = get_openai_credentials()
+            except Exception:
+                model_name = "gpt-4o-mini"
+            
+            client = self._get_client()
+            if not client:
+                return False
+
+            prompt = (
+                "Compare the following two facts about a user and determine if the 'New Fact' is a duplicate of the 'Existing Fact'.\n"
+                "Respond with 'DUPLICATE' if the new fact conveys the same information or is a subset of the existing fact.\n"
+                "Respond with 'NEW' if the new fact contains new, different, or contradictory information.\n\n"
+                f"Existing Fact: {existing}\n"
+                f"New Fact: {new}\n\n"
+                "Response (DUPLICATE or NEW):"
+            )
+            resp = client.chat.completions.create(
+                model=model_name or "gpt-4o-mini",
+                messages=[{"role": "user", "content": prompt}],
+                max_tokens=5,
+                temperature=0.0
+            )
+            result = resp.choices[0].message.content.strip().upper()
+            return "DUPLICATE" in result
+        except Exception as e:
+            print(f"Error in duplicate LLM check: {e}")
+            return False
+
     async def add(self, content: str, metadata: dict | None = None) -> None:
-        self._entries.append(content)
-        # Prefetch embedding for the new content asynchronously
+        """Embed the memory text content, check for duplicates, and append if unique."""
+        # 1. Check exact match
+        for entry in self._entries:
+            if content.strip().lower() == entry.strip().lower():
+                return
+
         client = self._get_client()
+        embedding = None
         if client:
             try:
                 emb_resp = client.embeddings.create(
                     input=content,
                     model="text-embedding-3-small"
                 )
-                self._embeddings[content] = emb_resp.data[0].embedding
+                embedding = emb_resp.data[0].embedding
+                self._embeddings[content] = embedding
             except Exception:
                 pass
+
+        # 2. If client and embedding are available, check semantic duplicates
+        if client and embedding:
+            is_duplicate = False
+            for entry in self._entries:
+                entry_emb = self._embeddings.get(entry)
+                if not entry_emb:
+                    try:
+                        emb_resp = client.embeddings.create(
+                            input=entry,
+                            model="text-embedding-3-small"
+                        )
+                        entry_emb = emb_resp.data[0].embedding
+                        self._embeddings[entry] = entry_emb
+                    except Exception:
+                        continue
+                
+                # Dot product of normalized vectors
+                score = sum(x * y for x, y in zip(embedding, entry_emb))
+                if score >= 0.95:
+                    is_duplicate = True
+                    break
+                elif score >= 0.65:
+                    if await self._check_duplicate_llm(entry, content):
+                        is_duplicate = True
+                        break
+            if is_duplicate:
+                return
+
+        self._entries.append(content)
+
 
 # Initialize the Store
 def run_memory_demo():
