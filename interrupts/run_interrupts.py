@@ -104,10 +104,20 @@ class ApprovalHook(HookProvider):
         
         print(f"\n[Approval Hook] Received interrupt response: {approval}")
         
-        # A broader list of positive keywords for approval
-        positive_keywords = {"y", "yes", "sure", "ok", "okay", "send", "please", "proceed", "go ahead", "approve", "do it"}
-        user_input_lower = approval.lower().strip()
-        has_approved = any(word in user_input_lower for word in positive_keywords)
+        # Use exact matching to prevent unsafe false positives (like "don't send")
+        has_approved = approval.strip().lower() in {
+            "y",
+            "yes",
+            "approve",
+            "approved",
+            "please send a mail",
+            "go ahead",
+            "do it",
+            "sure",
+            "ok",
+            "okay",
+            "proceed"
+        }
 
         if not has_approved:
             event.cancel_tool = f"User denied permission to send email to {recipient} (Response: {approval})"
