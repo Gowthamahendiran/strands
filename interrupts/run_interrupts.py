@@ -2,7 +2,7 @@ import os
 import sys
 import asyncio
 from typing import Any
-
+import requests
 # Ensure project root directory is in path
 current_dir = os.path.dirname(os.path.abspath(__file__))
 project_root = os.path.dirname(current_dir)
@@ -32,21 +32,49 @@ def get_weather(location: str) -> str:
 
 @tool
 def send_email(recipient: str, subject: str, body: str) -> bool:
-    """Send an email to a recipient with a subject and body.
+    """Send an email using Brevo."""
 
-    Parameters:
-      recipient: The recipient's email address.
-      subject: The subject line of the email.
-      body: The message body of the email.
-    """
-    print("\n=======================================================")
-    print("                SENDING EMAIL (ACTUAL CALL)")
-    print("=======================================================")
-    print(f"To:      {recipient}")
-    print(f"Subject: {subject}")
-    print(f"Body:\n{body}")
-    print("=======================================================")
-    return True
+    headers = {
+        "accept": "application/json",
+        "api-key": os.getenv("BREVO_API_KEY"),
+        "content-type": "application/json",
+    }
+
+    payload = {
+        "sender": {
+            "name": os.getenv("BREVO_SENDER_NAME"),
+            "email": os.getenv("BREVO_SENDER_EMAIL"),
+        },
+        "to": [
+            {
+                "email": recipient
+            }
+        ],
+        "subject": subject,
+        "textContent": body,
+    }
+
+    try:
+        response = requests.post(
+            "https://api.brevo.com/v3/smtp/email",
+            headers=headers,
+            json=payload,
+        )
+
+        if response.status_code == 201:
+            print("\n====================================")
+            print("EMAIL SENT SUCCESSFULLY")
+            print("====================================")
+            print(response.json())
+            return True
+
+        print(response.status_code)
+        print(response.text)
+        return False
+
+    except Exception as e:
+        print(e)
+        return False
 
 # This hook watches tool execution and intercepts email sending to ask for approval
 class ApprovalHook(HookProvider):
@@ -76,8 +104,12 @@ class ApprovalHook(HookProvider):
         
         print(f"\n[Approval Hook] Received interrupt response: {approval}")
         
-        # If response is not 'y', cancel the tool execution
-        if approval.lower() != "y":
+        # A broader list of positive keywords for approval
+        positive_keywords = {"y", "yes", "sure", "ok", "okay", "send", "please", "proceed", "go ahead", "approve", "do it"}
+        user_input_lower = approval.lower().strip()
+        has_approved = any(word in user_input_lower for word in positive_keywords)
+
+        if not has_approved:
             event.cancel_tool = f"User denied permission to send email to {recipient} (Response: {approval})"
 
 def run_interactive_interrupts():
@@ -102,12 +134,8 @@ def run_interactive_interrupts():
         ),
         tools=[get_weather, send_email]
     )
-
-    print("\n=======================================================")
-    print("      Interactive Strands Interrupts Demo (CLI)")
-    print("=======================================================")
     print("Type your questions below. Type 'exit' to quit.")
-    print("Example: 'Send a mail to gowthamsaran125@gmail.com that there is a meeting tomorrow morning. If rain comes please bring the umbrella.'")
+    print("Example: 'Send a mail to gowthamahendiran@gmail.com that there is a meeting tomorrow morning. If rain comes please bring the umbrella.'")
     print("=======================================================")
 
     while True:
