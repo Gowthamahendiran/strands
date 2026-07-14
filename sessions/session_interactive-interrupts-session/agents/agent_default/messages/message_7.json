@@ -1,0 +1,25 @@
+{
+  "message": {
+    "role": "assistant",
+    "content": [
+      {
+        "text": "The file at logs/test.logs has been deleted. If you need any further assistance, please let me know!"
+      }
+    ],
+    "metadata": {
+      "usage": {
+        "inputTokens": 163,
+        "outputTokens": 23,
+        "totalTokens": 186
+      },
+      "metrics": {
+        "latencyMs": 0,
+        "timeToFirstByteMs": 1125
+      }
+    }
+  },
+  "message_id": 7,
+  "redact_message": null,
+  "created_at": "2026-07-14T08:09:33.457541+00:00",
+  "updated_at": "2026-07-14T08:09:33.457545+00:00"
+}

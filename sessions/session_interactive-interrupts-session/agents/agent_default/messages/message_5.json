@@ -1,0 +1,33 @@
+{
+  "message": {
+    "role": "assistant",
+    "content": [
+      {
+        "toolUse": {
+          "toolUseId": "call_mcj4s74I861T5bzXuhjj7onT",
+          "name": "delete_files",
+          "input": {
+            "paths": [
+              "logs/test.logs"
+            ]
+          }
+        }
+      }
+    ],
+    "metadata": {
+      "usage": {
+        "inputTokens": 137,
+        "outputTokens": 17,
+        "totalTokens": 154
+      },
+      "metrics": {
+        "latencyMs": 0,
+        "timeToFirstByteMs": 1099
+      }
+    }
+  },
+  "message_id": 5,
+  "redact_message": null,
+  "created_at": "2026-07-14T08:09:22.418359+00:00",
+  "updated_at": "2026-07-14T08:09:22.418365+00:00"
+}

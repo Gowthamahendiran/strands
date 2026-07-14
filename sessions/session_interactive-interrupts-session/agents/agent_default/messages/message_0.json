@@ -1,0 +1,14 @@
+{
+  "message": {
+    "role": "user",
+    "content": [
+      {
+        "text": "please delete the file at logs/test.logs"
+      }
+    ]
+  },
+  "message_id": 0,
+  "redact_message": null,
+  "created_at": "2026-07-14T08:08:52.397964+00:00",
+  "updated_at": "2026-07-14T08:08:52.397970+00:00"
+}

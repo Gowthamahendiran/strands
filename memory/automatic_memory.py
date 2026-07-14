@@ -66,23 +66,28 @@ async def run_automatic_memory_demo():
     print("\n=== Conversing with Agent (Automatic extraction will trigger every 5 turns) ===")
     
     # Turn 1
-    resp = agent("Hi! My name is brother name is Mahi.")
+    print("\n=== Query 1: Hi! My name is brother name is Mahi. ===")
+    resp = await agent.invoke_async("Hi! My name is brother name is Mahi.")
     print(f"Agent: {resp}\n")
     
-    # Turn 2
-    resp = agent("I prefer dark mode.")
-    print(f"Agent: {resp}\n")
+    # # Turn 2
+    # print("\n=== Query 2: I prefer dark mode. ===")
+    # resp = await agent.invoke_async("I prefer dark mode.")
+    # print(f"Agent: {resp}\n")
     
     # Turn 3
-    resp = agent("I only eat vegetarian food.")
+    print("\n=== Query 3: I only eat vegetarian food. ===")
+    resp = await agent.invoke_async("I only eat vegetarian food.")
     print(f"Agent: {resp}\n")
     
-    # Turn 4
-    resp = agent("I love to watch movies.")
-    print(f"Agent: {resp}\n")
+    # # Turn 4
+    # print("\n=== Query 4: I love to watch movies. ===")
+    # resp = await agent.invoke_async("I love to watch movies.")
+    # print(f"Agent: {resp}\n")
     
     # Turn 5 (This will hit 5 turns and trigger the extraction!)
-    resp = agent("I love eating oats in morning.")
+    print("\n=== Query 5: I love eating oats in morning. ===")
+    resp = await agent.invoke_async("I love eating oats in morning.")
     print(f"Agent: {resp}\n")
 
     # Await background processes to complete extraction
@@ -108,9 +113,8 @@ async def run_automatic_memory_demo():
         print(f"Error querying Pinecone: {e}")
 
     # Turn 6: Verify memory is remembered and queried
-    resp = agent("What is my name, my preferences (like theme, food, movies), and what do I like to drink?")
+    resp = await agent.invoke_async("What is my name, my preferences (like theme, food, movies), and what do I like to drink?")
     print(f"Agent: {resp}\n")
-
 
     # Flush Langfuse traces before exit
     print("Flushing traces to Langfuse...")
