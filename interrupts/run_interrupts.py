@@ -32,49 +32,21 @@ def get_weather(location: str) -> str:
 
 @tool
 def send_email(recipient: str, subject: str, body: str) -> bool:
-    """Send an email using Brevo."""
+    """Send an email to a recipient with a subject and body.
 
-    headers = {
-        "accept": "application/json",
-        "api-key": os.getenv("BREVO_API_KEY"),
-        "content-type": "application/json",
-    }
-
-    payload = {
-        "sender": {
-            "name": os.getenv("BREVO_SENDER_NAME"),
-            "email": os.getenv("BREVO_SENDER_EMAIL"),
-        },
-        "to": [
-            {
-                "email": recipient
-            }
-        ],
-        "subject": subject,
-        "textContent": body,
-    }
-
-    try:
-        response = requests.post(
-            "https://api.brevo.com/v3/smtp/email",
-            headers=headers,
-            json=payload,
-        )
-
-        if response.status_code == 201:
-            print("\n====================================")
-            print("EMAIL SENT SUCCESSFULLY")
-            print("====================================")
-            print(response.json())
-            return True
-
-        print(response.status_code)
-        print(response.text)
-        return False
-
-    except Exception as e:
-        print(e)
-        return False
+    Parameters:
+      recipient: The recipient's email address.
+      subject: The subject line of the email.
+      body: The message body of the email.
+    """
+    print("\n=======================================================")
+    print("            SENDING EMAIL (SIMULATED DUMMY)")
+    print("=======================================================")
+    print(f"To:      {recipient}")
+    print(f"Subject: {subject}")
+    print(f"Body:\n{body}")
+    print("=======================================================")
+    return True
 
 # This hook watches tool execution and intercepts email sending to ask for approval
 class ApprovalHook(HookProvider):
