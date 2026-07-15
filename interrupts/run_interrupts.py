@@ -51,16 +51,26 @@ def send_email(recipient: str, subject: str, body: str) -> bool:
 # This hook watches tool execution and intercepts email sending to ask for approval
 class ApprovalHook(HookProvider):
     def __init__(self, app_name: str) -> None:
-        self.app_name = app_name
-
+        self.app_name = app_name # app_name = "interactive-app"
+    
+    # Registers the approve() method to run automatically whenever a BeforeToolCallEvent occurs
     def register_hooks(self, registry: HookRegistry, **kwargs: Any) -> None:
         registry.add_callback(BeforeToolCallEvent, self.approve)
-
+    
+    # approve method is called when an event matching the registered criteria occurs
     def approve(self, event: BeforeToolCallEvent) -> None:
         if event.tool_use["name"] != "send_email":
             return
 
         # Raise an interrupt to pause execution and ask for approval
+        # event.tool_use = {
+        #     "name": "send_email",
+        #     "input": {
+        #         "recipient": "[EMAIL_ADDRESS]",
+        #         "subject": "Meeting Reminder",
+        #         "body": "Meeting tomorrow..."
+        #     }
+        # }
         recipient = event.tool_use["input"]["recipient"]
         subject = event.tool_use["input"]["subject"]
         body = event.tool_use["input"]["body"]
@@ -147,7 +157,11 @@ def run_interactive_interrupts():
                         
                         # Prompt the user for input in the terminal
                         user_response = input("\nApprove sending email? (y/n): ").strip()
-                        
+
+                        print(f"\n[Logging] Recorded interrupt response details:")
+                        print(f"  Interrupt ID: {interrupt.id}")
+                        print(f"  Response:     {user_response}")
+
                         responses.append({
                             "interruptResponse": {
                                 "interruptId": interrupt.id,
