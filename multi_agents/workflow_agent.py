@@ -8,13 +8,14 @@ parent_dir = os.path.dirname(current_dir)
 if parent_dir not in sys.path:
     sys.path.insert(0, parent_dir)
 
-# Configure logging
-logging.basicConfig(level=logging.INFO, format="%(asctime)s - %(name)s - %(levelname)s - %(message)s")
+from dotenv import load_dotenv
+load_dotenv()
 
 from strands_secrets import get_openai_credentials
 from strands import Agent
 from strands.models.openai import OpenAIModel
 from strands.multiagent import GraphBuilder
+from pinecone_memory import init_telemetry_and_logging
 
 def create_sequential_workflow():
     # 1. Load credentials
@@ -81,6 +82,9 @@ def create_sequential_workflow():
     return workflow
 
 if __name__ == "__main__":
+    print("Initializing Langfuse Tracing...")
+    langfuse_client = init_telemetry_and_logging()
+    
     print("Initializing Sequential Content Workflow...")
     workflow = create_sequential_workflow()
     
@@ -111,3 +115,7 @@ if __name__ == "__main__":
         
     except Exception as e:
         print(f"Error executing workflow: {e}")
+
+    print("\nFlushing traces to Langfuse...")
+    langfuse_client.flush()
+    print("Tracing completed successfully!")

@@ -8,13 +8,14 @@ parent_dir = os.path.dirname(current_dir)
 if parent_dir not in sys.path:
     sys.path.insert(0, parent_dir)
 
-# Configure logging
-logging.basicConfig(level=logging.INFO, format="%(asctime)s - %(name)s - %(levelname)s - %(message)s")
+from dotenv import load_dotenv
+load_dotenv()
 
 from strands_secrets import get_openai_credentials
 from strands import Agent
 from strands.models.openai import OpenAIModel
 from strands.multiagent import Swarm
+from pinecone_memory import init_telemetry_and_logging
 
 def create_customer_support_swarm():
     # 1. Load credentials
@@ -71,6 +72,9 @@ def create_customer_support_swarm():
     return support_swarm
 
 if __name__ == "__main__":
+    print("Initializing Langfuse Tracing...")
+    langfuse_client = init_telemetry_and_logging()
+    
     print("Initializing Support Swarm...")
     swarm = create_customer_support_swarm()
     
@@ -102,3 +106,7 @@ if __name__ == "__main__":
         print(result.results[final_node_id].result)
     except Exception as e:
         print(f"Error executing swarm: {e}")
+
+    print("\nFlushing traces to Langfuse...")
+    langfuse_client.flush()
+    print("Tracing completed successfully!")
